@@ -1,0 +1,75 @@
+# STM32 Project Git Ignore
+
+# Keil generated files
+*.o
+*.d
+*.crf
+*.tmp
+*.bak
+*.lst
+*.lnp
+*.plg
+*.tra
+*.map
+*.dep
+*.iex
+*.hex
+*.axf
+*.bin
+*.elf
+
+# Keil uVision specific
+*.uvguix.*
+*.uvgui.*
+*.uvopt
+*.uvprojx
+
+# STM32CubeMX generated files
+*.ioc.bak
+
+# Build output directories
+Debug/
+Release/
+Exe/
+List/
+Obj/
+
+# Temporary files
+*.tmp
+*.temp
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE files
+.vscode/
+.cproject
+.project
+
+# KiCad files (if applicable)
+*.kicad_pcb
+*.kicad_pro
+*.sch
+*.kicad_sch
+
+# Python cache (if any)
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Log files
+*.log
+
+# Local configuration
+.env
+.env.local
+
+# Kiro files
+.kiro/
