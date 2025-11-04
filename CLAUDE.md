@@ -1,133 +1,133 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+此文件为Claude Code (claude.ai/code)在处理此仓库代码时提供指导。
 
-## Project Overview
+## 项目概述
 
-This is an STM32F103ZET6-based four-wheel drive (4WD) off-road vehicle control system (越野车). The project uses STM32CubeMX configuration and Keil MDK-ARM for development.
+这是一个基于STM32F103ZET6的四轮驱动（4WD）越野车控制系统。项目使用STM32CubeMX配置和Keil MDK-ARM进行开发。
 
-## Build and Development Commands
+## 构建和开发命令
 
-### Building the Project
-- **Primary IDE**: Keil MDK-ARM V5.32
-- **Project File**: `MDK-ARM/ZET6_Dianji.uvprojx`
-- **Build Output**: `MDK-ARM/ZET6_Dianji/ZET6_Dianji.hex` and `ZET6_Dianji.axf`
+### 项目构建
+- **主要IDE**: Keil MDK-ARM V5.32
+- **项目文件**: `MDK-ARM/ZET6_Dianji.uvprojx`
+- **构建输出**: `MDK-ARM/ZET6_Dianji/ZET6_Dianji.hex` 和 `ZET6_Dianji.axf`
 
-### Clean Build Artifacts
-- Run `keilkill.bat` to clean temporary build files (*.o, *.d, *.crf, etc.)
-- This batch file removes compilation artifacts and temporary files
+### 清理构建文件
+- 运行 `keilkill.bat` 清理临时构建文件（*.o, *.d, *.crf等）
+- 这个批处理文件会移除编译产物和临时文件
 
-### STM32CubeMX Configuration
-- Configuration file: `ZET6_Dianji.ioc`
-- Re-generate code using STM32CubeMX when modifying peripheral configurations
+### STM32CubeMX配置
+- 配置文件: `ZET6_Dianji.ioc`
+- 修改外设配置时使用STM32CubeMX重新生成代码
 
-## Project Architecture
+## 项目架构
 
-### Hardware Configuration
+### 硬件配置
 - **MCU**: STM32F103ZET6 (Cortex-M3, 512KB Flash, 64KB RAM)
-- **System Clock**: 72MHz
-- **External Crystal**: 8MHz HSE
+- **系统时钟**: 72MHz
+- **外部晶振**: 8MHz HSE
 
-### Peripheral Configuration
-- **Timers**:
-  - TIM1: PWM Generation for motors (4 channels)
-  - TIM8: PWM Generation for motors (4 channels)
-  - TIM2, TIM3, TIM4, TIM5: Encoder interfaces (quadrature encoder mode)
-- **USART1**: UART communication (PA9-TX, PA10-RX)
-- **GPIO**: Multiple digital inputs for sensors (XIN1-XIN16) and control signals
+### 外设配置
+- **定时器**:
+  - TIM1: 电机PWM生成（4通道）
+  - TIM8: 电机PWM生成（4通道）
+  - TIM2, TIM3, TIM4, TIM5: 编码器接口（正交编码器模式）
+- **USART1**: UART通信（PA9-TX, PA10-RX）
+- **GPIO**: 多个传感器数字输入引脚（XIN1-XIN16）和控制信号
 
-### Directory Structure
+### 目录结构
 ```
-├── Core/                    # STM32 HAL generated code
-│   ├── Inc/                 # Header files
-│   └── Src/                 # Source files (main.c, hal_msp.c, etc.)
-├── Hadeware/               # Hardware abstraction layer
-│   ├── motor_driver.c/h    # Motor PWM control (4 motors)
-│   ├── motor_app.c/h       # Motor application logic
-│   ├── encoder_driver.c/h   # Encoder reading and speed calculation
-│   ├── encoder_app.c/h     # Encoder application logic
-│   ├── pid.c/h            # PID control algorithms
-│   ├── pid_app.c/h        # PID application implementation
-│   ├── scheduler.c/h      # Task scheduler
-│   ├── uart_app.c/h      # UART communication
-│   ├── gray_app.c/h      # Gray code sensor processing
-│   └── led_app.c/h       # LED control
-├── mpu6050/               # IMU sensor implementation
-│   ├── mpu6050.c/h        # MPU6050 driver
-│   ├── soft_i2c.c/h       # Software I2C implementation
-│   └── mpu6050_app.c/h   # MPU6050 application logic
-├── MDK-ARM/               # Keil project files
-└── ZET6_Dianji.ioc       # STM32CubeMX configuration
+├── Core/                    # STM32 HAL生成代码
+│   ├── Inc/                 # 头文件
+│   └── Src/                 # 源文件（main.c, hal_msp.c等）
+├── Hadeware/               # 硬件抽象层
+│   ├── motor_driver.c/h    # 电机PWM控制（4个电机）
+│   ├── motor_app.c/h       # 电机应用逻辑
+│   ├── encoder_driver.c/h  # 编码器读取和速度计算
+│   ├── encoder_app.c/h     # 编码器应用逻辑
+│   ├── pid.c/h            # PID控制算法
+│   ├── pid_app.c/h        # PID应用实现
+│   ├── scheduler.c/h      # 任务调度器
+│   ├── uart_app.c/h       # UART通信
+│   ├── gray_app.c/h       # 灰度传感器处理
+│   └── led_app.c/h        # LED控制
+├── mpu6050/               # IMU传感器实现
+│   ├── mpu6050.c/h        # MPU6050驱动
+│   ├── soft_i2c.c/h       # 软件I2C实现
+│   └── mpu6050_app.c/h    # MPU6050应用逻辑
+├── MDK-ARM/               # Keil项目文件
+└── ZET6_Dianji.ioc        # STM32CubeMX配置
 ```
 
-### Key Components
+### 核心组件
 
-#### Motor Control System
-- **4 Motors**: Configured as 2 front motors + 2 rear motors (left/right pairs)
-- **PWM Control**: 1000-step resolution (0-999) with direction control
-- **Function**: `Set_PWM(PWM_L, PWM_R, PWM_L_2, PWM_R_2)` sets motor power
+#### 电机控制系统
+- **4个电机**: 配置为2个前电机 + 2个后电机（左右对）
+- **PWM控制**: 1000步分辨率（0-999）带方向控制
+- **功能**: `Set_PWM(PWM_L, PWM_R, PWM_L_2, PWM_R_2)` 设置电机功率
 
-#### Encoder System
-- **4 Encoders**: One per motor for closed-loop speed control
-- **Specification**: 13-line encoder with 20:1 gearbox, 4x quadrature detection
-- **PPR**: 1040 pulses per revolution (13 × 20 × 4)
-- **Speed Calculation**: Updates every 10ms via scheduler
+#### 编码器系统
+- **4个编码器**: 每个电机一个用于闭环速度控制
+- **规格**: 13线编码器配20:1减速箱，4倍频正交检测
+- **PPR**: 每转1040个脉冲（13 × 20 × 4）
+- **速度计算**: 通过调度器每10ms更新一次
 
-#### PID Controllers
-- **Positional PID**: For precise position control
-- **Incremental PID**: For smooth speed control
-- **Structure**: Includes Kp, Ki, Kd parameters with output limiting
+#### PID控制器
+- **位置式PID**: 用于精确位置控制
+- **增量式PID**: 用于平滑速度控制
+- **结构**: 包含Kp、Ki、Kd参数和输出限幅
 
-#### Task Scheduler
-- **Period**: 10ms main loop cycle
-- **Initialization**: `Scheduler_Init()` sets up all peripherals
-- **Runtime**: `Scheduler_Run()` executes all periodic tasks
+#### 任务调度器
+- **周期**: 10ms主循环周期
+- **初始化**: `Scheduler_Init()` 设置所有外设
+- **运行时**: `Scheduler_Run()` 执行所有周期性任务
 
 #### MPU6050 IMU
-- **I2C Interface**: Software bit-banging implementation
-- **Data**: 3-axis accelerometer + 3-axis gyroscope + temperature
-- **Usage**: Vehicle orientation and motion sensing
+- **I2C接口**: 软件位操作实现
+- **数据**: 3轴加速度计 + 3轴陀螺仪 + 温度
+- **用途**: 车辆方向和运动感知
 
-### Pin Configuration (from STM32CubeMX)
+### 引脚配置（来自STM32CubeMX）
 
-#### Motor PWM Outputs
-- **Front Motors**: TIM1 (PE9-CH1, PE11-CH2, PE13-CH3, PE14-CH4)
-- **Rear Motors**: TIM8 (PC6-CH1, PC7-CH2, PC8-CH3, PC9-CH4)
+#### 电机PWM输出
+- **前电机**: TIM1 (PE9-CH1, PE11-CH2, PE13-CH3, PE14-CH4)
+- **后电机**: TIM8 (PC6-CH1, PC7-CH2, PC8-CH3, PC9-CH4)
 
-#### Encoder Inputs
-- **TIM2**: PA15-CH1, PB3-CH2 (Front motors)
-- **TIM3**: PA6-CH1, PA7-CH2 (Left motors)
-- **TIM4**: PD12-CH1, PD13-CH2 (Right motors)
-- **TIM5**: PA0-CH1, PA1-CH2 (Rear motors)
+#### 编码器输入
+- **TIM2**: PA15-CH1, PB3-CH2 (前电机)
+- **TIM3**: PA6-CH1, PA7-CH2 (左电机)
+- **TIM4**: PD12-CH1, PD13-CH2 (右电机)
+- **TIM5**: PA0-CH1, PA1-CH2 (后电机)
 
-#### Digital Inputs
-- **XIN1-XIN16**: 16 digital input pins for sensors
-- **E1-E3**: Edge-triggered interrupt inputs (PF9, PF11, PF12)
-- **LED**: Status LED output (PF10)
+#### 数字输入
+- **XIN1-XIN16**: 16个传感器数字输入引脚
+- **E1-E3**: 边沿触发中断输入（PF9, PF11, PF12）
+- **LED**: 状态LED输出（PF10）
 
-#### Communication
+#### 通信
 - **UART1**: PA9 (TX), PA10 (RX)
-- **I2C**: PB4 (SCL), PB5 (SDA) for MPU6050
+- **I2C**: PB4 (SCL), PB5 (SDA) 用于MPU6050
 
-## Development Guidelines
+## 开发指南
 
-### Code Organization
-- Hardware drivers go in `Hadeware/` directory
-- Sensor-specific implementations in dedicated folders (e.g., `mpu6050/`)
-- Keep application logic separate from hardware abstraction
+### 代码组织
+- 硬件驱动放在 `Hadeware/` 目录
+- 传感器特定实现放在专用文件夹（如 `mpu6050/`）
+- 保持应用逻辑与硬件抽象分离
 
-### Programming Conventions
-- Use STM32 HAL library functions
-- Maintain 10ms scheduler timing for consistent control loops
-- All motor commands should be limited to PWM_MAX (999) and PWM_MIN (-999)
+### 编程约定
+- 使用STM32 HAL库函数
+- 保持10ms调度器时序以获得一致的控制循环
+- 所有电机命令应限制在PWM_MAX（999）和PWM_MIN（-999）之间
 
-### Adding New Features
-1. Configure peripherals in STM32CubeMX (edit `.ioc` file)
-2. Add driver files to appropriate directory
-3. Include new files in Keil project groups
-4. Update scheduler if new periodic tasks are needed
+### 添加新功能
+1. 在STM32CubeMX中配置外设（编辑`.ioc`文件）
+2. 将驱动文件添加到相应目录
+3. 将新文件包含在Keil项目组中
+4. 如需新的周期性任务则更新调度器
 
-### Debugging
-- Use USART1 for debugging output
-- Check pin assignments in `.ioc` file against hardware connections
-- Verify timer configurations match motor and encoder specifications
+### 调试
+- 使用USART1进行调试输出
+- 检查`.ioc`文件中的引脚分配与硬件连接的对应关系
+- 验证定时器配置与电机和编码器规格匹配
